@@ -1,56 +1,20 @@
-import fs from "fs/promises";
-import { nanoid } from "nanoid";
-import path from "path";
+import Contact from "../models/Contact.js";
 
-const filePath = "./db/contacts.json";
-const contactsPath = path.resolve(filePath);
+export const listContacts = () => Contact.find();
 
-async function listContacts() {
-  const data = await fs.readFile(contactsPath);
-  const contactList = JSON.parse(data);
-  return contactList;
-}
+export const addContact = (data) => Contact.create(data);
 
-async function getContactById(contactId) {
-  const data = await listContacts();
-  const foundData = data.find((el) => el.id === contactId);
-  return foundData || null;
-}
+export const getContactById = async (id) => {
+  const data = await Contact.findById(id);
+  return data;
+};
 
-async function removeContact(contactId) {
-  const data = await listContacts();
-  const idx = data?.findIndex((el) => el.id === contactId);
-  if (idx === -1 || !idx) {
-    return null;
-  }
-  const [deletedContact] = data.splice(idx, 1);
-  await fs.writeFile(contactsPath, JSON.stringify(data, null, 2));
-  return deletedContact;
-}
+export const updateContactById = (id, data) =>
+  Contact.findByIdAndUpdate(id, data);
 
-async function addContact({ name, email, phone }) {
-  const data = await listContacts();
-  const newContact = { id: nanoid(), name, email, phone };
-  data.push(newContact);
-  await fs.writeFile(contactsPath, JSON.stringify(data, null, 2));
-  return newContact;
-}
+export const removeContact = (id) => Contact.findByIdAndDelete(id);
 
-async function updateContactById(contactId, body) {
-  const data = await listContacts();
-  const idx = data?.findIndex((el) => el.id === contactId);
-  if (idx === -1 || !idx) {
-    return null;
-  }
-  data[idx] = { ...data[idx], ...body };
-  await fs.writeFile(contactsPath, JSON.stringify(data, null, 2));
-  return data[idx];
-}
-
-export {
-  listContacts,
-  getContactById,
-  removeContact,
-  addContact,
-  updateContactById,
+export const updateFavoriteById = (id, data) => {
+  const status = { favorite: data };
+  Contact.findByIdAndUpdate(id, status, { new: true });
 };

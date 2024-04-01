@@ -4,8 +4,8 @@ import {
   removeContact,
   addContact,
   updateContactById,
+  updateFavoriteById,
 } from "../services/contactsServices.js";
-
 import HttpError from "../helpers/HttpError.js";
 
 export const getAllContacts = async (req, res) => {
@@ -43,4 +43,14 @@ export const updateContact = async (req, res, next) => {
     throw HttpError(404, "Not found");
   }
   res.status(200).json(response);
+};
+
+export const updateStatusContact = async (req, res) => {
+  const { id } = req.params;
+  const favorite = req.body.favorite;
+  const result = await contactsService.updateFavoriteStatus(id, favorite);
+  if (!result) {
+    throw HttpError(404, "Not found");
+  }
+  res.status(200).json(result);
 };
