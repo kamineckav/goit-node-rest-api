@@ -1,20 +1,39 @@
-import Contact from "../models/Contact.js";
+import { Contact } from "../schemas/contactsSchemas.js";
 
-export const listContacts = () => Contact.find();
+async function listContacts() {
+  return Contact.find({});
+}
 
-export const addContact = (data) => Contact.create(data);
+async function getContactById(contactId) {
+  return Contact.findById(contactId);
+}
 
-export const getContactById = async (id) => {
-  const data = await Contact.findById(id);
-  return data;
-};
+async function removeContact(contactId) {
+  return Contact.findByIdAndDelete(contactId);
+}
 
-export const updateContactById = (id, data) =>
-  Contact.findByIdAndUpdate(id, data);
+async function addContact(body) {
+  return Contact.create(body);
+}
 
-export const removeContact = (id) => Contact.findByIdAndDelete(id);
+async function updateContactById(contactId, body) {
+  return Contact.findByIdAndUpdate(contactId, body, {
+    returnDocument: "after",
+  });
+}
 
-export const updateFavoriteById = (id, data) => {
-  const status = { favorite: data };
-  Contact.findByIdAndUpdate(id, status, { new: true });
+async function updateFavoriteById(contactId, status) {
+  const contactStatus = { favorite: status };
+  return Contact.findByIdAndUpdate(contactId, contactStatus, {
+    returnDocument: "after",
+  });
+}
+
+export {
+  listContacts,
+  getContactById,
+  removeContact,
+  addContact,
+  updateContactById,
+  updateFavoriteById,
 };

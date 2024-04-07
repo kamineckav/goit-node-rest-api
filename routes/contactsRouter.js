@@ -9,20 +9,20 @@ import {
 } from "../controllers/contactsControllers.js";
 import {
   createContactSchema,
-  toggleFavoriteSchema,
   updateContactSchema,
+  updateStatusSchema,
 } from "../schemas/contactsSchemas.js";
 import validateBody from "../helpers/validateBody.js";
 import { ctrlWrapper } from "../helpers/ctrlWrapper.js";
-import { isValidId } from "../helpers/isValidId.js";
+import { validateId } from "../helpers/isValidId.js";
 
 const contactsRouter = express.Router();
 
 contactsRouter.get("/", ctrlWrapper(getAllContacts));
 
-contactsRouter.get("/:id", isValidId, ctrlWrapper(getOneContact));
+contactsRouter.get("/:id", validateId, ctrlWrapper(getOneContact));
 
-contactsRouter.delete("/:id", isValidId, ctrlWrapper(deleteContact));
+contactsRouter.delete("/:id", validateId, ctrlWrapper(deleteContact));
 
 contactsRouter.post(
   "/",
@@ -32,15 +32,15 @@ contactsRouter.post(
 
 contactsRouter.put(
   "/:id",
-  isValidId,
+  validateId,
   validateBody(updateContactSchema),
   ctrlWrapper(updateContact)
 );
 
 contactsRouter.patch(
   "/:id/favorite",
-  isValidId,
-  validateBody(toggleFavoriteSchema),
+  validateId,
+  validateBody(updateStatusSchema),
   ctrlWrapper(updateStatusContact)
 );
 
