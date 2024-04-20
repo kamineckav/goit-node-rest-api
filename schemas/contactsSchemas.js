@@ -1,7 +1,4 @@
 import Joi from "joi";
-import mongoose from "mongoose";
-
-const { Schema, model } = mongoose;
 
 export const createContactSchema = Joi.object({
   name: Joi.string().required().trim(),
@@ -43,24 +40,3 @@ export const updateStatusSchema = Joi.object({
     "object.min": "Body must have at least one field",
   });
 
-const contactSchema = new Schema(
-  {
-    name: {
-      type: String,
-      required: [true, "Set name for contact"],
-    },
-    email: {
-      type: String,
-    },
-    phone: {
-      type: String,
-    },
-    favorite: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  { versionKey: false, timestamps: true }
-);
-
-export const Contact = model("contact", contactSchema);
