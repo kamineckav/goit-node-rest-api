@@ -12,11 +12,14 @@ import {
   updateContactSchema,
   updateStatusSchema,
 } from "../schemas/contactsSchemas.js";
-import validateBody from "../helpers/validateBody.js";
+import validateBody from "../midllewares/validateBody.js";
 import { ctrlWrapper } from "../helpers/ctrlWrapper.js";
-import { validateId } from "../helpers/isValidId.js";
+import { validateId } from "../midllewares/isValidId.js";
+import { validateToken } from "../midllewares/validateToken.js";
 
 const contactsRouter = express.Router();
+
+contactsRouter.use(validateToken);
 
 contactsRouter.get("/", ctrlWrapper(getAllContacts));
 

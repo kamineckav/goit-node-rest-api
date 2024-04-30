@@ -1,39 +1,47 @@
-import { Contact } from "../schemas/contactsSchemas.js";
+import { Contact } from "../models/contactModel.js";
 
-async function listContacts() {
-  return Contact.find({});
+async function listContacts(filter = {}, settings = {}) {
+  return Contact.find(filter, "-createdAt -updatedAt", settings).populate(
+    "owner",
+    "email subscription"
+  );
 }
 
-async function getContactById(contactId) {
-  return Contact.findById(contactId);
+async function countDocuments(filter) {
+  return Contact.countDocuments(filter);
 }
 
-async function removeContact(contactId) {
-  return Contact.findByIdAndDelete(contactId);
+async function getContactByFilter(filter) {
+  return Contact.findOne(filter);
+}
+
+async function removeContact(filter) {
+  return Contact.findOneAndDelete(filter);
 }
 
 async function addContact(body) {
   return Contact.create(body);
 }
 
-async function updateContactById(contactId, body) {
-  return Contact.findByIdAndUpdate(contactId, body, {
+async function updateContactByFilter(filter, body) {
+  return Contact.findOneAndUpdate(filter, body, {
     returnDocument: "after",
   });
 }
 
-async function updateFavoriteById(contactId, status) {
+async function updateFavoriteByFilter(filter, status) {
   const contactStatus = { favorite: status };
-  return Contact.findByIdAndUpdate(contactId, contactStatus, {
-    returnDocument: "after",
-  });
+return Contact.findOneAndUpdate(filter, contactStatus, {
+  returnDocument: "after",
+});
 }
 
 export {
   listContacts,
-  getContactById,
+  getContactByFilter,
   removeContact,
   addContact,
-  updateContactById,
-  updateFavoriteById,
+  updateContactByFilter,
+  updateFavoriteByFilter,
+  countDocuments,
 };
