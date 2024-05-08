@@ -19,4 +19,10 @@ async function updateUser(userId, updateData) {
   }).select("email subscription -_id");
 }
 
-export { createUser, findUser, updateUser, findUserById };
+async function updateAvatar(userId, updateData) {
+  return User.findByIdAndUpdate(userId, updateData, {
+    returnDocument: "after",
+  }).select("avatarURL -_id");
+}
+
+export { createUser, findUser, updateUser, findUserById, updateAvatar };

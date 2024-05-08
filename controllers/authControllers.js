@@ -1,10 +1,16 @@
 import "dotenv/config";
 import jwt from "jsonwebtoken";
-
-import { createUser, findUser, updateUser } from "../services/authService.js";
+import gravatar from "gravatar";
+import {
+  createUser,
+  findUser,
+  updateUser,
+  updateAvatar,
+} from "../services/authService.js";
 import { createHash, compareHash } from "../helpers/passwordHash.js";
 
 import HttpError from "../helpers/HttpError.js";
+import { resizer } from "../helpers/jimp.js";
 
 const SECRET_KEY = process.env.SECRET_KEY;
 const EXPIRES_TIME = process.env.EXPIRES_TIME;
@@ -15,8 +21,15 @@ export const signup = async (req, res) => {
   if (user) {
     throw HttpError(409, "Email in use");
   }
+
+  const avatarURL = gravatar.url(email);
+
   const hashPwd = await createHash(password);
-  const response = await createUser({ ...req.body, password: hashPwd });
+  const response = await createUser({
+    ...req.body,
+    password: hashPwd,
+    avatarURL,
+  });
 
   res.status(201).json({ user: response });
 };
@@ -62,4 +75,17 @@ export const updateSubscription = async (req, res) => {
   const response = await updateUser(req.user._id, req.body);
 
   res.json(response);
+};
+
+export const avatars = async (req, res) => {
+  if (req.file === undefined) {
+    throw HttpError(400, "File not found");
+  }
+  try {
+    const avatarURL = await resizer(req.file.filename, req.user.email);
+    const response = await updateAvatar(req.user._id, { avatarURL });
+    res.json(response);
+  } catch (error) {
+    throw HttpError(error.status, error.message);
+  }
 };
