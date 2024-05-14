@@ -11,6 +11,8 @@ import contactsRouter from "./routes/contactsRouter.js";
 const { DB_HOST, PORT = 3000 } = process.env;
 export const staticPath = path.resolve("public", "avatars");
 
+mongoose.Promise = global.Promise;
+
 const app = express();
 
 app.use(morgan("tiny"));
